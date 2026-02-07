@@ -1,0 +1,7 @@
+---
+- name: Install and configure HAProxy for Vault
+  hosts: haproxy_servers
+  become: true
+
+  roles:
+    - haproxy
