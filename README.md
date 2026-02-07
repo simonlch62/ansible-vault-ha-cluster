@@ -18,6 +18,9 @@ En cas de panne d'un noeud, Vault elit un nouveau leader et HAProxy bascule le t
 | vault-03 | Vault (Raft leader/follower) | 192.168.92.131 |
 | haproxy-01 | Load balancer | 192.168.92.129 |
 
+<img width="1146" height="791" alt="image" src="https://github.com/user-attachments/assets/a16a7f3f-a52a-4886-bb27-abf582e4a173" />
+
+
 ## 2. Structure du projet
 
 ```
@@ -66,7 +69,7 @@ Sur chaque serveur, en root :
 ```bash
 apt update && apt install -y sudo
 useradd -m -s /bin/bash deploy
-echo "deploy:test" | chpasswd
+echo "deploy:test" | chpasswd # ne pas oublier de le supprimer
 echo "deploy ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/deploy
 chmod 440 /etc/sudoers.d/deploy
 ```
