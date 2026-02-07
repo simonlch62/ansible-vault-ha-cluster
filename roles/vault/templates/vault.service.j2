@@ -16,7 +16,7 @@ SecureBits=keep-caps
 AmbientCapabilities=CAP_IPC_LOCK
 NoNewPrivileges=yes
 ExecStart=/usr/bin/vault server -config={{ vault_config_dir }}/vault.hcl
-ExecReload=/bin/kill --signal HUP $MAINPID
+ExecReload=/usr/bin/kill --signal HUP $MAINPID
 KillMode=process
 KillSignal=SIGINT
 Restart=on-failure
