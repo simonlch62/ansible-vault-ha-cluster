@@ -62,7 +62,16 @@ En cas de panne d'un noeud, Vault elit un nouveau leader et HAProxy bascule le t
   ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519
   ```
 
-### 3.2 Pre-requis serveur (4 machines Debian)
+### 3.2 Ressources minimales
+
+| Machine | OS | vCPU | RAM | Disque |
+|---|---|---|---|---|
+| vault-01 | Debian 12 | 2 | 2 Go | 20 Go |
+| vault-02 | Debian 12 | 2 | 2 Go | 20 Go |
+| vault-03 | Debian 12 | 2 | 2 Go | 20 Go |
+| haproxy-01 | Debian 12 | 1 | 512 Mo | 10 Go |
+
+### 3.3 Pre-requis serveur (4 machines Debian)
 
 Sur chaque serveur, en root :
 
@@ -82,13 +91,13 @@ for IP in 192.168.92.141 192.168.92.130 192.168.92.131 192.168.92.129; do
 done
 ```
 
-### 3.3 Deploiement
+### 3.4 Deploiement
 
 ```bash
 ansible-playbook playbooks/site.yml --diff
 ```
 
-### 3.4 Initialisation du cluster Vault
+### 3.5 Initialisation du cluster Vault
 
 A faire une seule fois apres le premier deploiement.
 
@@ -127,7 +136,7 @@ vault-02    192.168.92.130:8201    follower    true
 vault-03    192.168.92.131:8201    follower    true
 ```
 
-### 3.5 Verification HAProxy
+### 3.6 Verification HAProxy
 
 ```bash
 curl http://192.168.92.129:8200/v1/sys/health
@@ -135,7 +144,7 @@ curl http://192.168.92.129:8200/v1/sys/health
 
 Page de stats : `http://192.168.92.129:8404/stats`
 
-### 3.6 Acces a Vault
+### 3.7 Acces a Vault
 
 - **UI Web** : `http://192.168.92.129:8200/ui`
 - **API / CLI** : `export VAULT_ADDR='http://192.168.92.129:8200'`
