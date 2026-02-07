@@ -55,7 +55,11 @@ En cas de panne d'un noeud, Vault elit un nouveau leader et HAProxy bascule le t
 - Linux
 - Ansible installe :
   ```bash
-  sudo apt update && sudo apt install ansible
+  sudo dnf install ansible-core
+  ```
+- Collection ansible.posix (pour firewalld) :
+  ```bash
+  ansible-galaxy collection install ansible.posix
   ```
 - Cle SSH Ed25519 :
   ```bash
@@ -66,17 +70,16 @@ En cas de panne d'un noeud, Vault elit un nouveau leader et HAProxy bascule le t
 
 | Machine | OS | vCPU | RAM | Disque |
 |---|---|---|---|---|
-| vault-01 | Debian 12 | 2 | 2 Go | 20 Go |
-| vault-02 | Debian 12 | 2 | 2 Go | 20 Go |
-| vault-03 | Debian 12 | 2 | 2 Go | 20 Go |
-| haproxy-01 | Debian 12 | 1 | 512 Mo | 10 Go |
+| vault-01 | RHEL 9 | 2 | 2 Go | 20 Go |
+| vault-02 | RHEL 9 | 2 | 2 Go | 20 Go |
+| vault-03 | RHEL 9 | 2 | 2 Go | 20 Go |
+| haproxy-01 | RHEL 9 | 1 | 512 Mo | 10 Go |
 
-### 3.3 Pre-requis serveur (4 machines Debian)
+### 3.3 Pre-requis serveur (4 machines RHEL 9)
 
 Sur chaque serveur, en root :
 
 ```bash
-apt update && apt install -y sudo
 useradd -m -s /bin/bash deploy
 echo "deploy:test" | chpasswd # ne pas oublier de le supprimer
 echo "deploy ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/deploy
