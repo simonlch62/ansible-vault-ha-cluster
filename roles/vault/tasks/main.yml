@@ -1,19 +1,17 @@
 ---
-- name: Add HashiCorp APT repository
-  ansible.builtin.deb822_repository:
+- name: Add HashiCorp YUM repository
+  ansible.builtin.yum_repository:
     name: hashicorp
-    types: deb
-    uris: https://apt.releases.hashicorp.com
-    suites: "{{ ansible_distribution_release }}"
-    components: main
-    signed_by: https://apt.releases.hashicorp.com/gpg
+    description: HashiCorp Official Repository
+    baseurl: https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable
+    gpgcheck: true
+    gpgkey: https://rpm.releases.hashicorp.com/gpg
     state: present
 
 - name: Install Vault
-  ansible.builtin.apt:
-    name: "vault={{ vault_version }}-*"
+  ansible.builtin.dnf:
+    name: "vault-{{ vault_version }}"
     state: present
-    update_cache: true
 
 - name: Create vault group
   ansible.builtin.group:
@@ -26,7 +24,7 @@
     name: "{{ vault_user }}"
     group: "{{ vault_group }}"
     system: true
-    shell: /usr/sbin/nologin
+    shell: /sbin/nologin
     home: "{{ vault_data_dir }}"
     create_home: false
 
@@ -69,6 +67,20 @@
     owner: root
     group: root
     mode: "0644"
+
+- name: Open Vault API port in firewalld
+  ansible.posix.firewalld:
+    port: "{{ vault_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Open Vault cluster port in firewalld
+  ansible.posix.firewalld:
+    port: "{{ vault_cluster_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
 
 - name: Enable and start Vault service
   ansible.builtin.systemd:
