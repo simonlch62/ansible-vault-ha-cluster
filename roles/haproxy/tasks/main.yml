@@ -1,9 +1,8 @@
 ---
 - name: Install HAProxy
-  ansible.builtin.apt:
+  ansible.builtin.dnf:
     name: haproxy
     state: present
-    update_cache: true
 
 - name: Deploy HAProxy configuration
   ansible.builtin.template:
@@ -14,6 +13,26 @@
     mode: "0644"
     validate: haproxy -c -f %s
   notify: Reload haproxy
+
+- name: Allow HAProxy to bind to Vault port with SELinux
+  ansible.builtin.command:
+    cmd: setsebool -P haproxy_connect_any on
+  changed_when: false
+
+- name: Open HAProxy frontend port in firewalld
+  ansible.posix.firewalld:
+    port: "{{ haproxy_frontend_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Open HAProxy stats port in firewalld
+  ansible.posix.firewalld:
+    port: "{{ haproxy_stats_port }}/tcp"
+    permanent: true
+    immediate: true
+    state: enabled
+  when: haproxy_stats_enabled
 
 - name: Enable and start HAProxy
   ansible.builtin.systemd:
