@@ -1,0 +1,27 @@
+ui = {{ vault_ui_enabled | lower }}
+
+disable_mlock = {{ vault_disable_mlock | lower }}
+
+storage "raft" {
+  path    = "{{ vault_data_dir }}"
+  node_id = "{{ inventory_hostname }}"
+
+{% for host in groups['vault_servers'] %}
+{% if host != inventory_hostname %}
+  retry_join {
+    leader_api_addr = "http://{{ hostvars[host]['ansible_host'] }}:{{ vault_port }}"
+  }
+
+{% endif %}
+{% endfor %}
+}
+
+listener "tcp" {
+  address     = "{{ vault_address }}:{{ vault_port }}"
+  tls_disable = 1
+}
+
+api_addr     = "http://{{ ansible_host }}:{{ vault_port }}"
+cluster_addr = "http://{{ ansible_host }}:{{ vault_cluster_port }}"
+
+log_level = "{{ vault_log_level }}"
